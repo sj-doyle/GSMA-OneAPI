@@ -1,0 +1,33 @@
+
+.ParameterGroupHeading {
+	font: 14px Arial, Helvetica, sans-serif;
+	font-weight:bold;
+	margin-top:6px;
+	margin-bottom:3px;	
+}
+
+.ParameterRow {
+	postion:relative;
+	clear:both; 
+	padding-top:2px;
+	padding-bottom:2px;
+}	
+
+.ParameterLabel {
+	font: 12px Arial, Helvetica, sans-serif;
+	font-weight:bold;
+	text-align:right;
+	width:280px;
+	position:relative;
+	top:0px;
+	left:5px;	
+	float:left;
+}
+
+.ParameterValue {
+	font: 12px Arial, Helvetica, sans-serif;
+	margin-left:300px;
+	position:relative;
+	text-align:left;
+	word-wrap:break-word;
+}
