@@ -1,0 +1,97 @@
+ <!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+ 
+    <package name="e-time" extends="struts-default">
+    	<interceptors>
+			<interceptor name="customTimeRequestInterceptor" class="com.mobilelife.listeners.RequestInterceptor"/>
+	        <interceptor-stack name="myStack">
+	           <interceptor-ref name="defaultStack"/>
+	           <interceptor-ref name="customTimeRequestInterceptor"/>
+	        </interceptor-stack>
+		</interceptors>
+		
+		<default-interceptor-ref name="myStack"/>
+
+       	<global-results>
+            <result name="error">/error.jsp</result>
+            <result name="noPermission" type="dispatcher">/NoPermission.jsp</result>
+            <result name="notLoggedIn" type="dispatcher">/index.jsp</result>
+        </global-results>
+		
+        <action name="DefaultPage" class="com.mobilelife.struts.DefaultPageAction">
+            <result>/index.jsp</result>
+        </action>        
+
+        <action name="Welcome" class="com.mobilelife.struts.WelcomeAction">
+            <result name="success" type="dispatcher">/Welcome.jsp</result>
+            <result name="ChangePassword" type="redirect">
+            	<param name="location">changeOwnPassword.pdo</param>
+            </result>
+        </action>
+
+        <action name="doLogin" class="com.mobilelife.struts.LoginAction" >
+            <result name="success" type="redirect">
+            	<param name="location">Welcome.pdo</param>
+				<param name="parse">true</param>
+				<param name="encode">true</param>
+			</result>  
+			<result name="Manager" type="redirect">
+            	<param name="location">leaderBoard.pdo</param>
+				<param name="parse">true</param>
+				<param name="encode">true</param>
+			</result> 
+			<result name="Driver" type="redirect">
+            	<param name="location">home.pdo</param>
+				<param name="parse">true</param>
+				<param name="encode">true</param>
+			</result> 
+            <result name="login" type="dispatcher">/index.jsp</result>
+            <result name="error" type="dispatcher">/index.jsp</result>
+        </action>
+
+<!--        <action name="forgotPassword" class="com.mobilelife.struts.ForgotPasswordAction" >
+            <result name="success" type="dispatcher">/Login.jsp</result>
+            <result name="error" type="dispatcher">/Login.jsp</result>
+        </action>
+        
+        <action name="changeOwnPassword" class="com.mobilelife.struts.ChangeOwnPasswordAction" >
+            <result name="ChangePasswordForm" type="dispatcher">/PasswordChangeForm.jsp</result>
+            <result name="success" type="dispatcher">/PasswordChanged.jsp</result>
+        </action>
+
+        <action name="forgotUsername" class="com.mobilelife.struts.ForgotUsernameAction" >
+            <result name="success" type="dispatcher">/Login.jsp</result>
+            <result name="error" type="dispatcher">/Login.jsp</result>
+        </action> -->
+ 
+        <action name="doLogout" class="com.mobilelife.struts.LogoutAction" >
+            <result name="success" type="dispatcher">/index.jsp</result>
+            <result name="error" type="dispatcher">/index.jsp</result>
+        </action>                
+
+        <action name="driverMatrix" class="com.mobilelife.struts.DriverMatrixAction">
+            <result name="success" type="dispatcher">/DriverMatrix.jsp</result>
+        </action>
+
+        <action name="driverWarnings" class="com.mobilelife.struts.DriverWarningsAction">
+            <result name="success" type="dispatcher">/DriverWarnings.jsp</result>
+        </action>
+
+        <action name="home" class="com.mobilelife.struts.HomeAction">
+            <result name="success" type="dispatcher">/Home.jsp</result>
+        </action>
+
+        <action name="whereAndWhen" class="com.mobilelife.struts.WhereAndWhenAction">
+            <result name="success" type="dispatcher">/WhereAndWhen.jsp</result>
+        </action>
+
+        <action name="leaderBoard" class="com.mobilelife.struts.LeaderBoardAction">
+            <result name="success" type="dispatcher">/LeaderBoard.jsp</result>
+        </action>
+
+
+
+    </package>
+</struts>

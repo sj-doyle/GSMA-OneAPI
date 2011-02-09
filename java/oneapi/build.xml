@@ -1,0 +1,137 @@
+<?xml version="1.0"?> 
+<project name="OneAPI" default="server" basedir="."> 
+		
+	<path id="classpath.base">
+		<fileset dir="WebContent/WEB-INF/lib" includes="**/*.jar" excludes="**/gsmoneapi*.jar"/>
+	 	<pathelement location="hibernate"/>
+	</path>
+
+    <target name="init">
+    	<delete dir='build'/>
+        <mkdir dir="build"/>
+        <mkdir dir="genlib"/>
+    </target>
+
+    <target name="compile" depends="init"> 
+    	<javac destdir="build" debug="on" encoding="ISO-8859-1">
+          	<classpath refid="classpath.base" />
+          	<compilerarg value="-Xlint:all,unchecked"/>
+          	<src path="src"/>
+            <include name="**/*.java"/>
+         </javac>
+    </target>
+
+    <target name="jar" depends="compile">
+    	<jar destfile="genlib/gsmoneapi.jar" basedir="build">
+     	  	<include name="**/*.class"/>
+     	</jar>
+    	<jar destfile="WebContent/WEB-INF/lib/gsmoneapi.jar" basedir="build">
+     	  	<include name="**/*.class"/>
+     	</jar>
+   </target>
+	
+    <target name="server" depends="jar">
+        <mkdir dir="build/server"/>
+    	<war destfile="build/server/oneapiserver.war" webxml="conf/web.xml">    
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<section name="common">
+				  <attribute name="Specification-Title" value="OneAPI Server"/>
+				  <attribute name="Specification-Vendor" value="GSM Association"/>
+				  <attribute name="Implementation-Title" value="OneAPI SERVER"/>
+				  <attribute name="Implementation-Version" value="${TODAY}"/> 
+				  <attribute name="Implementation-Vendor" value="Mobile Life Consulting Limited."/>
+				</section>
+			</manifest>
+
+			<zipfileset dir="conf"
+	          prefix="WEB-INF/classes" casesensitive="yes" >
+	          	<include name="*.properties"/>
+	            <exclude name='CVS/**/*'/>
+			</zipfileset>
+    		
+    		<zipfileset file="genlib/gsmoneapi.jar" fullpath="WEB-INF/lib/gsmoneapi.jar" casesensitive="yes" />
+
+			<zipfileset dir="WebContent" casesensitive="yes" >
+			  <include name="**/*.ico"/>
+			  <include name="**/*.jsp"/>
+			  <include name="**/*.inc"/>
+			  <include name="**/*.pdf"/>
+			  <include name="**/*.css"/>
+			  <include name="**/*.gif"/>
+
+			</zipfileset>
+
+            <lib dir='WebContent/WEB-INF/lib'>
+                <exclude name='**/javax-servlet.jar'/>
+                <exclude name='**/jsp-api.jar'/>
+                <exclude name='**/servlet-api.jar'/>
+            	<exclude name='**/gsmoneapi.jar'/>
+                <include name='**/*.jar'/>
+            </lib>			
+        </war>          
+    </target>
+	
+	<target name="code" depends="jar">
+		<mkdir dir="release"/>
+		<mkdir dir="release/java"/>
+		<tar destfile="release/java/oneapi.tar">
+			<tarfileset dir="src"
+			              prefix="src"
+			              preserveLeadingSlashes="true">
+	        	<exclude name='CVS/**/*'/>
+			</tarfileset>
+			<tarfileset dir="WebContent"
+			              prefix="WebContent"
+			              preserveLeadingSlashes="true">
+	        	<exclude name='CVS/**/*'/>
+			</tarfileset>
+			<tarfileset dir="conf"
+			              prefix="conf"
+			              preserveLeadingSlashes="true">
+	        	<exclude name='CVS/**/*'/>
+			</tarfileset>
+			<tarfileset dir="."
+			              prefix="."
+			              preserveLeadingSlashes="true">
+	        	<include name='build.xml'/>
+			</tarfileset>
+		
+		</tar>
+		<tar destfile="release/php/oneapi-php.tar">
+			<tarfileset dir="PHPAPI"
+			              prefix="oneapi"
+			              preserveLeadingSlashes="true">
+	        	<exclude name='CVS/**/*'/>
+			</tarfileset>
+			<tarfileset dir="PHPTestPages"
+			              prefix=""
+			              preserveLeadingSlashes="true">
+	        	<exclude name='CVS/**/*'/>
+			</tarfileset>
+		</tar>
+				
+	</target>
+	
+	<target name="javadoc" depends="jar">
+		   <javadoc sourcepath="src"
+		            destdir="javadoc"
+		   			access="protected"
+		            packagenames="org.gsm.oneapi.*"
+		            doctitle="GSM Association OneAPI V1 Documentation">
+	          	<classpath refid="classpath.base" />
+		   		<fileset dir="src" defaultexcludes="yes">
+		   	            <include name="**/*.java"/>
+		   	            <exclude name="CVS/**/*" />
+		   	    </fileset>
+		   </javadoc>
+		<tar destfile="release/java/oneapi-javadoc.tar">
+			<tarfileset dir="javadoc"
+				prefix=""
+				preserveLeadingSlashes="true">
+				<exclude name='CVS/**/*'/>
+			</tarfileset>
+		</tar>
+	</target>
+
+</project>
