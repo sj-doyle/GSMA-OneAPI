@@ -1,0 +1,21 @@
+GSMA OneAPI Sandbox Server
+
+Author: Stephen Doyle, Mobile Life
+Repository admin: Kevin Smith, Vodafone
+
+Purpose: The OneAPI sandbox server is an open source implementation of the GSMA OneAPI specification for accessing mobile network functions from the Web. The functions available are:
+
+- Sending and receiving SMS and MMS from your Web application
+- Locating mobile users via their phones
+- charging a user's bill for Web content (e.g. an in-game micropayment)
+
+Master and branches:
+The master branch implements the GSMA OneAPI v1.0 specification.
+
+The oneapi-2-0-beta branch will include the 1.0 APIs plus new APIs for Voice Call Control, Data Connection Profile, and Device Capability.
+
+The oneapi-2-1-beta branch implements some changes on the location, messaging and payments APIs, primarily to allow asynchronous requests and callbacks. 
+
+Usage: Full guide coming soon…for the Java sandbox, bundle the java/oneapi folder as  a WAR and it runs by default on port 8080. Tested on Tomcat 6 (OS X and Win XP)
+
+Questions/comments: please mail oneapi@gsm.org
