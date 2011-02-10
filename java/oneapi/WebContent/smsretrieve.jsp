@@ -40,9 +40,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		SMSRetrieve me=new SMSRetrieve(serviceEndpoints, authorisationHeader);
+		SMSRetrieve me=new SMSRetrieve(serviceEndpoints, username, password);
 		
 		smsResponse=me.retrieveMessages(registrationId, maxBatchSize);	
 		

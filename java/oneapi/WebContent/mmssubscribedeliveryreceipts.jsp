@@ -29,7 +29,11 @@
 	if (submit==null) {
 		
 		senderAddress="tel:+123456789";
-		notifyURL="http://www.yourURL.here";
+		notifyURL=	(request.isSecure()?"https://":"http://")+
+					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+					
+					(request.getContextPath()!=null?request.getContextPath():"")+
+					"/mmsdeliverynotification.jsp";
+
 		callbackData="doSomething()";
 		clientCorrelator="123456";
 		
@@ -42,9 +46,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		MMSSend me=new MMSSend(serviceEndpoints, authorisationHeader);
+		MMSSend me=new MMSSend(serviceEndpoints, username, password);
 		
 		mmsResponse=me.subscribeToDeliveryNotifications(senderAddress, clientCorrelator, notifyURL, callbackData);	
 	}

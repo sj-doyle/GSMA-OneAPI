@@ -29,7 +29,10 @@
 	if (submit==null) {
 		
 		senderAddress="tel:+123456789";
-		notifyURL="http://www.yourURL.here";
+		notifyURL=	(request.isSecure()?"https://":"http://")+
+					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+					
+					(request.getContextPath()!=null?request.getContextPath():"")+
+					"/smsdeliverynotification.jsp";
 		callbackData="doSomething()";
 		clientCorrelator="123456";
 		
@@ -42,9 +45,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		SMSSend me=new SMSSend(serviceEndpoints, authorisationHeader);
+		SMSSend me=new SMSSend(serviceEndpoints, username, password);
 		
 		smsResponse=me.subscribeToDeliveryNotifications(senderAddress, clientCorrelator, notifyURL, callbackData);	
 	}

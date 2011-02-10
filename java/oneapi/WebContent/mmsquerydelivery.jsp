@@ -40,9 +40,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		MMSSend me=new MMSSend(serviceEndpoints, authorisationHeader);
+		MMSSend me=new MMSSend(serviceEndpoints, username, password);
 		
 		mmsResponse=me.queryDeliveryStatus(senderAddress, requestId);	
 		

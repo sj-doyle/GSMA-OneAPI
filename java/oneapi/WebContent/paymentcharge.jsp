@@ -54,11 +54,9 @@
 		serviceId="SID1234";
 		productId="PID00008765";
 		callbackURL=(request.isSecure()?"https://":"http://")+
-					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+
-					
+					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+					
 					(request.getContextPath()!=null?request.getContextPath():"")+
-					"/callback.jsp";
-
+					"/paymentchargenotification.jsp";
 		username="Fred.Jones";
 		password="1234";
 		endpoint=sandboxEndpoints.getServiceEndpoints().getAmountChargeEndpoint();
@@ -68,9 +66,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		Charge me=new Charge(serviceEndpoints, authorisationHeader);
+		Charge me=new Charge(serviceEndpoints, username, password);
 		
 		paymentResponse=me.charge(endUserId, referenceCode, description, currency, amount, code, callbackURL, 
 								 clientCorrelator, onBehalfOf, purchaseCategoryCode, channel, taxAmount, serviceId, productId);

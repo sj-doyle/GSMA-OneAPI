@@ -4,39 +4,26 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
 
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.MultipartStream;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.endpoints.ServiceEndpoints;
-import org.gsm.oneapi.foundation.CommandLineOptions;
 import org.gsm.oneapi.foundation.FormParameters;
 import org.gsm.oneapi.foundation.JSONRequest;
 import org.gsm.oneapi.responsebean.RequestError;
-import org.gsm.oneapi.responsebean.mms.InboundMessage;
+import org.gsm.oneapi.responsebean.mms.InboundMessageNotification;
+import org.gsm.oneapi.responsebean.mms.InboundMessageNotificationWrapper;
 import org.gsm.oneapi.responsebean.mms.InboundMessageWrapper;
 import org.gsm.oneapi.responsebean.mms.MMSMessageReceiptSubscriptionResponse;
 import org.gsm.oneapi.responsebean.mms.RetrieveMMSMessageResponse;
 import org.gsm.oneapi.responsebean.mms.RetrieveMMSResponse;
-import org.gsm.oneapi.responsebean.sms.RetrieveSMSResponse;
-import org.gsm.oneapi.responsebean.sms.SMSMessageReceiptSubscriptionResponse;
 import org.gsm.oneapi.server.OneAPIServlet;
 
 public class MMSRetrieve {
@@ -63,7 +50,25 @@ public class MMSRetrieve {
 		this.endPoints=endPoints;
 		this.authorisationHeader=authorisationHeader;
 	}
-	
+
+	/**
+	 Creates a new instance of the Receive MMS API main interface. Requires endPoints to define the URL targets of the various Receive MMS network calls and the username/password used for HTTP Basic authorisation with the OneAPI server.  
+	                          
+	@param  endPoints  contains a set of service/ call specific endpoints 	
+	@param  username is the account name allocated for use of the service
+	@param  password is the corresponding authentication password
+	     
+	@see org.gsm.oneapi.endpoints.ServiceEndpoints
+	 */	
+	public MMSRetrieve(ServiceEndpoints endPoints, String username, String password) {
+		String authorisationHeader=null;
+		if (username!=null && password!=null) {
+			authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		}
+		this.authorisationHeader=authorisationHeader;
+		this.endPoints=endPoints;
+	}
+
 	/**
 	 Can be used to update the service endpoints  
 	                          
@@ -352,6 +357,35 @@ public class MMSRetrieve {
 		}
 		return responseCode;
 	}
+
+	/**
+	 * Utility function to process a received JSON formatted message received notification into a usable class instance of InboundMessageNotification
+	 * @param request the HttpServletRequest - make sure the input stream has not been read before calling
+	 * @return InboundMessageNotification
+	 */
+	public static InboundMessageNotification convertInboundMessageNotification(HttpServletRequest request) {
+		InboundMessageNotification inboundMessageNotification=null;
+		if (request.getContentType()!=null && request.getContentType().equalsIgnoreCase("application/json")) {
+			try {
+				ServletInputStream inputStream=request.getInputStream();
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            int i;
+	            while ((i = (byte) inputStream.read()) != -1) baos.write(i);
+	           
+	            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	            
+	            ObjectMapper mapper=new ObjectMapper();
+	
+	            InboundMessageNotificationWrapper wrapper=mapper.readValue(bais, InboundMessageNotificationWrapper.class);
+	            if (wrapper!=null) inboundMessageNotification=wrapper.getInboundMessageNotification();
+			} catch (java.io.IOException e) {
+				logger.error("IOException "+e.getMessage());				
+			}
+		}
+		return inboundMessageNotification;
+	}
+
 
 
 

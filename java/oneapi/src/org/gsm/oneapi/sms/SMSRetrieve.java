@@ -1,18 +1,26 @@
 package org.gsm.oneapi.sms;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.endpoints.ServiceEndpoints;
 import org.gsm.oneapi.foundation.CommandLineOptions;
 import org.gsm.oneapi.foundation.FormParameters;
 import org.gsm.oneapi.foundation.JSONRequest;
 import org.gsm.oneapi.responsebean.RequestError;
+import org.gsm.oneapi.responsebean.sms.InboundSMSMessageNotification;
+import org.gsm.oneapi.responsebean.sms.InboundSMSMessageNotificationWrapper;
 import org.gsm.oneapi.responsebean.sms.RetrieveSMSResponse;
 import org.gsm.oneapi.responsebean.sms.SMSDeliveryReceiptSubscriptionResponse;
 import org.gsm.oneapi.responsebean.sms.SMSMessageReceiptSubscriptionResponse;
@@ -43,7 +51,26 @@ public class SMSRetrieve {
 		this.endPoints=endPoints;
 		this.authorisationHeader=authorisationHeader;
 	}
+
+	/**
+	 Creates a new instance of the Receive SMS API main interface. Requires endPoints to define the URL targets of the various Receive SMS network calls and the username/password used for HTTP Basic authorisation with the OneAPI server.  
+	                          
+	@param  endPoints  contains a set of service/ call specific endpoints 	
+	@param  username is the account name allocated for use of the service
+	@param  password is the corresponding authentication password
+	     
+	@see org.gsm.oneapi.endpoints.ServiceEndpoints
+	 */	
+	public SMSRetrieve(ServiceEndpoints endPoints, String username, String password) {
+		String authorisationHeader=null;
+		if (username!=null && password!=null) {
+			authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		}
+		this.authorisationHeader=authorisationHeader;
+		this.endPoints=endPoints;
+	}
 	
+
 	/**
 	 Can be used to update the service endpoints  
 	                          
@@ -195,6 +222,33 @@ public class SMSRetrieve {
 		return responseCode;
 	}
 
+	/**
+	 * Utility function to process a received JSON formatted message received notification into a usable class instance of InboundSMSMessageNotification
+	 * @param request the HttpServletRequest - make sure the input stream has not been read before calling
+	 * @return InboundSMSMessageNotification
+	 */
+	public static InboundSMSMessageNotification convertInboundSMSMessageNotification(HttpServletRequest request) {
+		InboundSMSMessageNotification inboundSMSMessageNotification=null;
+		if (request.getContentType()!=null && request.getContentType().equalsIgnoreCase("application/json")) {
+			try {
+				ServletInputStream inputStream=request.getInputStream();
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            int i;
+	            while ((i = (byte) inputStream.read()) != -1) baos.write(i);
+	           
+	            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	            
+	            ObjectMapper mapper=new ObjectMapper();
+	
+	            InboundSMSMessageNotificationWrapper wrapper=mapper.readValue(bais, InboundSMSMessageNotificationWrapper.class);
+	            if (wrapper!=null) inboundSMSMessageNotification=wrapper.getInboundSMSMessageNotification();
+			} catch (java.io.IOException e) {
+				logger.error("IOException "+e.getMessage());				
+			}
+		}
+		return inboundSMSMessageNotification;
+	}
 
 
 

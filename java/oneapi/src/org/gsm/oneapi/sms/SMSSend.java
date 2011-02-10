@@ -1,17 +1,27 @@
 package org.gsm.oneapi.sms;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.endpoints.ServiceEndpoints;
 import org.gsm.oneapi.foundation.CommandLineOptions;
 import org.gsm.oneapi.foundation.FormParameters;
 import org.gsm.oneapi.foundation.JSONRequest;
 import org.gsm.oneapi.responsebean.RequestError;
 import org.gsm.oneapi.responsebean.payment.PaymentResponse;
+import org.gsm.oneapi.responsebean.sms.DeliveryInfoNotification;
+import org.gsm.oneapi.responsebean.sms.DeliveryInfoNotificationWrapper;
+import org.gsm.oneapi.responsebean.sms.InboundSMSMessageNotification;
+import org.gsm.oneapi.responsebean.sms.InboundSMSMessageNotificationWrapper;
 import org.gsm.oneapi.responsebean.sms.SMSDeliveryReceiptSubscriptionResponse;
 import org.gsm.oneapi.responsebean.sms.SMSSendDeliveryStatusResponse;
 import org.gsm.oneapi.responsebean.sms.SMSSendResponse;
@@ -42,7 +52,26 @@ public class SMSSend {
 		this.endPoints=endPoints;
 		this.authorisationHeader=authorisationHeader;
 	}
+
+	/**
+	 Creates a new instance of the Send SMS API main interface. Requires endPoints to define the URL targets of the various Send SMS network calls and the username/password used for HTTP Basic authorisation with the OneAPI server.  
+	                          
+	@param  endPoints  contains a set of service/ call specific endpoints 	
+	@param  username is the account name allocated for use of the service
+	@param  password is the corresponding authentication password
+	     
+	@see org.gsm.oneapi.endpoints.ServiceEndpoints
+	 */	
+	public SMSSend(ServiceEndpoints endPoints, String username, String password) {
+		String authorisationHeader=null;
+		if (username!=null && password!=null) {
+			authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		}
+		this.authorisationHeader=authorisationHeader;
+		this.endPoints=endPoints;
+	}
 	
+
 	/**
 	 Can be used to update the service endpoints  
 	                          
@@ -245,7 +274,33 @@ public class SMSSend {
 		return responseCode;
 	}
 
-
+	/**
+	 * Utility function to process a received JSON formatted delivery info notification into a usable class instance of DeliveryInfoNotification
+	 * @param request the HttpServletRequest - make sure the input stream has not been read before calling
+	 * @return DeliveryInfoNotification
+	 */
+	public static DeliveryInfoNotification convertDeliveryInfoNotification(HttpServletRequest request) {
+		DeliveryInfoNotification deliveryInfoNotification=null;
+		if (request.getContentType()!=null && request.getContentType().equalsIgnoreCase("application/json")) {
+			try {
+				ServletInputStream inputStream=request.getInputStream();
+				
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	            int i;
+	            while ((i = (byte) inputStream.read()) != -1) baos.write(i);
+	           
+	            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+	            
+	            ObjectMapper mapper=new ObjectMapper();
+	
+	            DeliveryInfoNotificationWrapper wrapper=mapper.readValue(bais, DeliveryInfoNotificationWrapper.class);
+	            if (wrapper!=null) deliveryInfoNotification=wrapper.getDeliveryInfoNotification();
+			} catch (java.io.IOException e) {
+				logger.error("IOException "+e.getMessage());				
+			}
+		}
+		return deliveryInfoNotification;
+	}
 
 	public static void main(String[] args) {
 		BasicConfigurator.configure();

@@ -38,6 +38,24 @@ public class Locate {
 	}
 	
 	/**
+	 Creates a new instance of the Location API main interface. Requires endPoints to define the URL targets of the terminal location network call and the username/password used for HTTP Basic authorisation with the OneAPI server.  
+	                          
+	@param  endPoints  contains a set of service/ call specific endpoints 	
+	@param  username is the account name allocated for use of the service
+	@param  password is the corresponding authentication password
+	     
+	@see org.gsm.oneapi.endpoints.ServiceEndpoints
+	 */	
+	public Locate(ServiceEndpoints endPoints, String username, String password) {
+		String authorisationHeader=null;
+		if (username!=null && password!=null) {
+			authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		}
+		this.authorisationHeader=authorisationHeader;
+		this.endPoints=endPoints;
+	}
+	
+	/**
 	 Can be used to update the service endpoints  
 	                          
 	@param  endPoints  contains a set of service/ call specific endpoints 	

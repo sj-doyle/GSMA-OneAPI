@@ -49,30 +49,34 @@
       
 		</p>
 		
-		
+          <p>This is a set of example JSP pages showing how to use the JSP example API. Each OneAPI function has its own page which allows a call to be made to the OneAPI server.</p>
+          <p>Each example page provides an HTML form into which OneAPI parameters can be entered - for convenience example values are included for most parameters.</p>
+          <p>Please refer to the OneAPI Interface descriptions:</p>
+          <ul>
+          <li><a href="https://gsma.securespsite.com/access/Access%20API%20Wiki/Payment%20RESTful%20API.aspx">Payment RESTful API</a> - charge mobile network users for your services</li>
+          <li><a href="https://gsma.securespsite.com/access/Access%20API%20Wiki/SMS%20RESTful%20API.aspx">SMS RESTful API</a> - send and receive SMS via your application</li>
+          <li><a href="https://gsma.securespsite.com/access/Access%20API%20Wiki/MMS%20RESTful%20API.aspx">MMS RESTful API</a> - send and receive MMS via your application</li>
+          <li><a href="https://gsma.securespsite.com/access/Access%20API%20Wiki/Location%20RESTful%20API.aspx">Location RESTful API</a> - get the location of one or more mobile network users</li>
+          </ul>
           
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-          <p>&nbsp;</p>
-
+          <h3>Example Page Layout</h3>
+          
+          <p>When you initially load each example page there are three sections of form parameters:</p>
+          <ul>
+          <li>Mandatory OneAPI parameters for the function</li>
+          <li>Optional OneAPI parameters for the function</li>
+          <li>The 'network service endpoint' URL and the username/ password for authentication</li>
+          </ul>
+          <p>You can change any of these values and this will affect the request sent to the OneAPI server.</p>
+          
+          <p>Once you have submitted the OneAPI request the server response will be displayed:</p>
+          <ul>
+          <li>The HTTP response code - see the OneAPI documentation for the expected value</li>
+          <li>The HTTP response Content Type header - in most cases the response will be 'application/json'</li>
+          <li>Either an error message or</li>
+          <li>The data returned to the application by the OneAPI server as a Java object</li>
+          </ul>
+		
 
         </div></div></div>
         

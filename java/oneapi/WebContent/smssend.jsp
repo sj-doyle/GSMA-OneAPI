@@ -40,7 +40,10 @@
 		address1="tel:+13500000992";
 		message="Hello World!";
 		clientCorrelator="123456";
-		notifyURL="http://application.example.com/notifications/DeliveryInfoNotification";
+		notifyURL=	(request.isSecure()?"https://":"http://")+
+					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+					
+					(request.getContextPath()!=null?request.getContextPath():"")+
+					"/smsdeliverynotification.jsp";
 		senderName="ACME Inc.";
 		callbackData="some-data-useful-to-the-requester";
 		
@@ -53,9 +56,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		SMSSend me=new SMSSend(serviceEndpoints, authorisationHeader);
+		SMSSend me=new SMSSend(serviceEndpoints, username, password);
 		
 		String[] addressList={address0, address1, address2, address3, address4};
 		

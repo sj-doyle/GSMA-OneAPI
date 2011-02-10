@@ -35,9 +35,7 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		
-		MMSRetrieve me=new MMSRetrieve(serviceEndpoints, authorisationHeader);
+		MMSRetrieve me=new MMSRetrieve(serviceEndpoints, username, password);
 	
 		responseCode=me.cancelReceiptNotifications(subscriptionId);
 	}
