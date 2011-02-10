@@ -63,7 +63,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		Reservation me=new Reservation(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		
+		Reservation me=new Reservation(serviceEndpoints, authorisationHeader);
 		
 		paymentResponse=me.reserveAdditionalAmount(endUserId, referenceCode, description, currency, amount, referenceSequence, code, 
 				 onBehalfOf, purchaseCategoryCode, channel, taxAmount, serviceId, productId);

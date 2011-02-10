@@ -40,7 +40,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		MMSRetrieve me=new MMSRetrieve(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		
+		MMSRetrieve me=new MMSRetrieve(serviceEndpoints, authorisationHeader);
 		
 		mmsResponse=me.retrieveMessages(registrationId, maxBatchSize);	
 		

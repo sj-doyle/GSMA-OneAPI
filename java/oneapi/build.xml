@@ -100,14 +100,6 @@
 		</tar>
 		<tar destfile="release/php/oneapi-php.tar">
 			<tarfileset dir="PHPAPI"
-			              prefix=""
-			              preserveLeadingSlashes="true">
-	        	<exclude name='CVS/**/*'/>
-			</tarfileset>
-		</tar>
-
-		<tar destfile="release/php/oneapi-php-examples.tar">
-			<tarfileset dir="PHPAPI"
 			              prefix="oneapi"
 			              preserveLeadingSlashes="true">
 	        	<exclude name='CVS/**/*'/>
@@ -118,7 +110,7 @@
 	        	<exclude name='CVS/**/*'/>
 			</tarfileset>
 		</tar>
-
+				
 	</target>
 	
 	<target name="javadoc" depends="jar">

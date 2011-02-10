@@ -31,10 +31,7 @@
 	if (submit==null) {
 		
 		destinationAddress="3456";
-		notifyURL=	(request.isSecure()?"https://":"http://")+
-					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+					
-					(request.getContextPath()!=null?request.getContextPath():"")+
-					"/smsmessagenotification.jsp";
+		notifyURL="http://www.yoururl.here/notifications/DeliveryInfoNotification";
 		criteria="Vote";
 		notificationFormat="JSON";
 		callbackData="doSomething()";
@@ -49,7 +46,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		SMSRetrieve me=new SMSRetrieve(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		
+		SMSRetrieve me=new SMSRetrieve(serviceEndpoints, authorisationHeader);
 		
 		smsResponse=me.subscribeToReceiptNotifications(destinationAddress, notifyURL, criteria, notificationFormat, clientCorrelator, callbackData);	
 	}

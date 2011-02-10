@@ -1,10 +1,6 @@
 package org.gsm.oneapi.server.mms;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -21,34 +17,16 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.responsebean.ResourceReference;
-import org.gsm.oneapi.responsebean.mms.DeliveryInfoNotification;
 import org.gsm.oneapi.server.OneAPIServlet;
 import org.gsm.oneapi.server.ValidationRule;
 
 /**
  * Servlet implementing the OneAPI function for sending an MMS message
  */
-public class SendMMSServlet extends OneAPIServlet implements Runnable {
+public class SendMMSServlet extends OneAPIServlet {
 	private static final long serialVersionUID = -626608869216499030L;
 	
 	static Logger logger=Logger.getLogger(SendMMSServlet.class);
-
-	// Used when the servlet is created
-	public SendMMSServlet() {
-		
-	}
-	
-	private String callbackData=null;
-	private String notifyURL=null;
-	private String[] addresses=null;
-
-	// Used when want to emulate sending a notification
-	public SendMMSServlet(String callbackData, String notifyURL, String[] addresses) {
-		this.callbackData=callbackData;
-		this.notifyURL=notifyURL;		
-		this.addresses=addresses;
-	}
-	
 
 	public void init() throws ServletException {
 		logger.debug("SendMMSServlet initialised");
@@ -208,67 +186,9 @@ public class SendMMSServlet extends OneAPIServlet implements Runnable {
 				logger.debug("Sending response. ResourceURL="+resourceURL);
 				
 				sendJSONResponse(response, jsonResponse, CREATED, resourceURL);
-				
-				if (notifyURL!=null) {
-					SendMMSServlet t=new SendMMSServlet(callbackData, notifyURL, addresses.toArray(new String[]{}));					
-					new Thread(t).start();
-				}
-
 			}
 		}
 		
-	}
-
-	public void run() {
-		logger.debug("Notifier Thread :: Sleeping now...");
-		try {
-			Thread.sleep(10000L);
-		} catch (Exception e) {}
-		logger.debug("Notifier Thread ::  Awoken");
-		try {
-			logger.debug("Notifier Thread :: Creating connection to "+notifyURL);
-			HttpURLConnection con = (HttpURLConnection) new URL(notifyURL).openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/json");
-			con.setDoOutput(true);
-			con.setDoInput(true);
-			con.setUseCaches(false);
-			
-			DeliveryInfoNotification deliveryInfoNotification=new DeliveryInfoNotification();
-			
-			DeliveryInfoNotification.DeliveryInfo[] deliveryInfo=new DeliveryInfoNotification.DeliveryInfo[addresses.length];
-			for (int i=0; i<addresses.length; i++) {
-				if (addresses[i]!=null && addresses[i].trim().length()>0) deliveryInfo[i]=new DeliveryInfoNotification.DeliveryInfo(addresses[i], "DeliveredToTerminal");
-			}
-			deliveryInfoNotification.setDeliveryInfo(deliveryInfo);
-			deliveryInfoNotification.setCallbackData(callbackData);			
-			
-			ObjectMapper mapper=new ObjectMapper();			
-			String jsonResponse="{\"deliveryInfoNotification\":"+mapper.writeValueAsString(deliveryInfoNotification)+"}";
-
-			logger.debug("Notifier Thread :: Sending JSON data: "+jsonResponse);
-			OutputStream output=con.getOutputStream();
-			byte[] ba=jsonResponse.getBytes();
-			output.write (ba);
-			output.flush();
-			output.close();
-			logger.debug("Notifier Thread :: Finished output");
-			logger.debug("Notifier Thread :: Reading response");
-			
-			InputStream in=con.getInputStream();
-			logger.debug("Notifier Thread :: Response code: "+con.getResponseCode());
-			if (in!=null) {
-				int c;
-				StringBuffer rbuf=new StringBuffer();
-				while ((c=in.read())!=-1) {
-					rbuf.append((char) c);
-				}
-				logger.debug("Notifier Thread :: Read: "+rbuf.toString());
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 }

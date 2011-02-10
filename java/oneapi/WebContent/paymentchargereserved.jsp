@@ -58,7 +58,8 @@
 		callbackURL=(request.isSecure()?"https://":"http://")+
 					(request.getHeader("x-forwarded-host")!=null?request.getHeader("x-forwarded-host"):request.getHeader("host"))+
 					(request.getContextPath()!=null?request.getContextPath():"")+
-					"/paymentchargereservednotification.jsp";
+					"/callback.jsp";
+
 		username="Fred.Jones";
 		password="1234";
 		endpoint=sandboxEndpoints.getServiceEndpoints().getAmountReservationChargeEndpoint();
@@ -68,7 +69,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		Reservation me=new Reservation(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+				
+		Reservation me=new Reservation(serviceEndpoints, authorisationHeader);
 		
 		paymentResponse=me.chargeAmount(endUserId, referenceCode, description, currency, amount, referenceSequence, code, callbackURL,
 				clientCorrelator, onBehalfOf, purchaseCategoryCode, channel, taxAmount, serviceId, productId);

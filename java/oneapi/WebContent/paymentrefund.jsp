@@ -64,7 +64,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		Charge me=new Charge(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		
+		Charge me=new Charge(serviceEndpoints, authorisationHeader);
 		
 		paymentResponse=me.refund(endUserId, referenceCode, description, currency, amount, code, clientCorrelator, originalServerReferenceCode,
 								 onBehalfOf, purchaseCategoryCode, channel, taxAmount, serviceId, productId);

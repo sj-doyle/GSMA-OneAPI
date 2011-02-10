@@ -37,7 +37,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		Locate me=new Locate(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+
+		Locate me=new Locate(serviceEndpoints, authorisationHeader);
 		
 		locationResponse=me.locateTerminal(address, requestedAccuracy);
 		if (locationResponse!=null && locationResponse.getTerminalLocationList()!=null) {

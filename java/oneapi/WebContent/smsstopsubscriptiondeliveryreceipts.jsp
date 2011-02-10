@@ -35,7 +35,9 @@
 
 		ServiceEndpoints serviceEndpoints=sandboxEndpoints.getServiceEndpoints();
 		
-		SMSSend me=new SMSSend(serviceEndpoints, username, password);
+		String authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
+		
+		SMSSend me=new SMSSend(serviceEndpoints, authorisationHeader);
 	
 		responseCode=me.cancelDeliveryNotifications(subscriptionId);
 	}

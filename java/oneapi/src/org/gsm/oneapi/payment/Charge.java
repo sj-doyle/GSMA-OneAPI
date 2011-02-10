@@ -25,25 +25,17 @@
 
 package org.gsm.oneapi.payment;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.endpoints.ServiceEndpoints;
 import org.gsm.oneapi.foundation.CommandLineOptions;
 import org.gsm.oneapi.foundation.FormParameters;
 import org.gsm.oneapi.foundation.JSONRequest;
 import org.gsm.oneapi.responsebean.RequestError;
-import org.gsm.oneapi.responsebean.payment.AmountTransaction;
-import org.gsm.oneapi.responsebean.payment.AmountTransactionWrapper;
 import org.gsm.oneapi.responsebean.payment.PaymentResponse;
 import org.gsm.oneapi.server.OneAPIServlet;
 
@@ -70,24 +62,6 @@ public class Charge {
 	public Charge(ServiceEndpoints endPoints, String authorisationHeader) {
 		this.endPoints=endPoints;
 		this.authorisationHeader=authorisationHeader;
-	}
-	
-	/**
-	 Creates a new instance of the Payment Charge API main interface. Requires endPoints to define the URL targets of the charge network call and the username/password used for HTTP Basic authorisation with the OneAPI server.  
-	                          
-	@param  endPoints  contains a set of service/ call specific endpoints 	
-	@param  username is the account name allocated for use of the service
-	@param  password is the corresponding authentication password
-	     
-	@see org.gsm.oneapi.endpoints.ServiceEndpoints
-	 */	
-	public Charge(ServiceEndpoints endPoints, String username, String password) {
-		String authorisationHeader=null;
-		if (username!=null && password!=null) {
-			authorisationHeader=JSONRequest.getAuthorisationHeader(username, password);
-		}
-		this.authorisationHeader=authorisationHeader;
-		this.endPoints=endPoints;
 	}
 	
 	
@@ -303,34 +277,6 @@ public class Charge {
 			logger.debug("No response obtained");
 		}
 
-	}
-
-	/**
-	 * Utility function to process a received JSON formatted amount transaction notification into a usable class instance of AmountTransaction
-	 * @param request the HttpServletRequest - make sure the input stream has not been read before calling
-	 * @return AmountTransaction
-	 */
-	public static AmountTransaction convertAmountTransaction(HttpServletRequest request) {
-		AmountTransaction amountTransaction=null;
-		if (request.getContentType()!=null && request.getContentType().equalsIgnoreCase("application/json")) {
-			try {
-				ServletInputStream inputStream=request.getInputStream();
-				
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	            int i;
-	            while ((i = (byte) inputStream.read()) != -1) baos.write(i);
-	           
-	            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-	            
-	            ObjectMapper mapper=new ObjectMapper();
-	
-	            AmountTransactionWrapper wrapper=mapper.readValue(bais, AmountTransactionWrapper.class);
-	            if (wrapper!=null) amountTransaction=wrapper.getAmountTransaction();
-			} catch (java.io.IOException e) {
-				logger.error("IOException "+e.getMessage());				
-			}
-		}
-		return amountTransaction;
 	}
 
 }
