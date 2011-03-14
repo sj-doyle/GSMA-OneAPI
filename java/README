@@ -1,0 +1,11 @@
+Github OneAPI Master branch
+
+Author Stephen Doyle, Mobile Life
+Repository maintenance Kevin Smith, Vodafone
+ 
+Purpose: Java Web Application that presents the GSMA OneAPI interface for Charging, Location, SMS and MMS. See http://gsma.securespsite.com/access/Access%20API%20Wiki/Home.aspx for specifications.
+
+Deployment: pull the oneapi directory and contents and build a .war. Deploy in your JEE application server (tested on Tomcat 6, OSX and Win XP) 
+
+Usage: Start the application on localhost:8080 . This shows a form through which requests may be made to the OneAPI server. The src code is LGPL and m,ay be used to build a production OneAPI server that will actually fulfill the requests (i.e. charge/locate/message users) 
+
