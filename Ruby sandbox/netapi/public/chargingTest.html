@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript" src="jquery-1.6.2.js"></script>
+<script type="text/javascript" src="jquery.oneapi.js"></script>
+</head>
+
+<body>
+<div id="test">Click here to test RESTful charging facade</div>
+<script type="text/javascript">
+$(document).ready(function(){
+
+  $('#test').click(function(){
+  	var billableItem = {
+  		"applicationId" : "myAppId",
+  		"address": "acr:12345",
+  		"amount": "0.70",
+  		"locale": "en-GB",
+  		"referenceCode": "myRef",
+  		"contentName":"Supergame level 2",
+  		"description":"new level for Supergame",
+  		"assetId":"myAssetId"};
+  		
+  	var myCharge = new $.fn.mondrian.charge(billableItem);
+  	
+  	$('#p1').text('transactionStatus: ' + myCharge.transactionStatus);
+  	$('#p2').text('transactionId: ' + myCharge.transactionId);
+   	$('#p3').text('transactionURL: ' + myCharge.transactionURL);
+  });
+})  
+
+
+</script>
+
+
+<div id='result'>
+<p id='p1'></p>
+<p id='p2'></p>
+<p id='p3'></p>
+</div>
+
+</body>
+</html>

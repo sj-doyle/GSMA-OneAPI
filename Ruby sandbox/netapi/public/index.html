@@ -1,0 +1,420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <title>OneAPI RESTful Sandbox</title>
+    <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
+    <link href="application.css" media="all" rel="stylesheet" type="text/css"/>
+	<link href="sunburst.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/png" />
+    <link rel="stylesheet" href="fancybox/jquery.fancybox.css?v=2.0.3" type="text/css" media="screen" />
+    <script type="text/javascript" src="jquery-1.6.2.js"></script>
+	<script type="text/javascript" src="jquery.oneapi.js"></script>
+    <script type="text/javascript" src="fancybox/jquery.fancybox.pack.js?v=2.0.3"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			// button actions
+			$("#ryocharging button").click(function(){
+				$("#rollyourowncharging").slideDown("slow");
+				});
+			$("#ryolocation button").click(function(){
+				$("#rollyourownlocation").slideDown("slow");
+				});
+			$("#gmaps button").click(function(){
+				$("#googlemaps").slideDown("slow");
+				});
+			$("#ryosms button").click(function(){
+				$("#rollyourownsms").slideDown("slow");
+				});	
+				
+			$(".various").fancybox({
+				maxWidth	: 800,
+				maxHeight	: 600,
+				fitToView	: false,
+				width		: '70%',
+				height		: '70%',
+				autoSize	: false,
+				closeClick	: false,
+				openEffect	: 'none',
+				closeEffect	: 'none',
+				href        : '/locationExample'
+			});	
+				
+		});
+	</script>
+	<style type="text/css">
+		button.inline
+		{
+		   color:#FFFFFF;
+		   background-color:#FF0000;
+		   border-style:none;
+		}
+	</style>
+  </head>
+
+  <body>
+    <div id="body">
+      <div id="contents">
+        <div id="header">
+        	<a href="/"><img alt="Network APIs RESTful sandbox" src="img/logo.jpg" width="725"/></a>
+        </div>
+
+        <h2>I would like to...</h2>
+        <div class="contents">
+          <ul class="bullet">
+            <a href="#chargetobill">Charge a user</a>
+            <a href="#sendSMS">Web to SMS</a>
+            <!--<a href="#receiveSMS">Receive SMS</a>-->
+            <!--<a href="#identify">Identify users</a>-->
+            <a href="#location">Locate users</a>
+          </ul>
+        </div>
+        
+        <h2 id="getting-started">
+         Getting started
+        </h2>
+        <div class="contents">       
+			<div class="description">
+			This Sandbox documents and executes RESTful Network API calls. It can be used to test and does not involve a live network. 
+			To use it, select a function to test from the buttons above. Then either execute the HTTP requests documented in the <button class="inline">Roll your own</button> sections via your preferred coding tool (including browser or curl);  
+			or download <a href="scripts/jquery.oneapi.js">the jQuery plugin</a> and <a href="http://www.jquery.com">jQuery</a> to follow the jQuery examples.
+		    </div>
+
+<pre class='sunburst'>&lt;head>
+&lt;script type=&quot;text/javascript&quot; src=<span class="String">&quot;jquery-1.7.0.js&quot;</span>>&lt;/script>
+&lt;script type="text/javascript&quot; src=<span class="String">&quot;jquery.oneapi.js&quot;</span>>&lt;/script>
+&lt;/head>
+</pre>
+        </div>
+        
+        
+        <h2 id="chargetobill">
+         Charge to a mobile user's bill
+        </h2>
+        <div class="contents">
+			<div class="description">
+              For in-app billing direct from a browser, Web app or native app. Uses the <a href="http://www.jquery.com">jQuery</a> 
+              plugin to create the charge, and access the response transaction object to determine the transaction status. 
+			</div>
+		
+<pre class='sunburst'>
+var billableItem = 
+{&quot;address&quot;:<span class="String">&quot;acr:12345&quot;, </span><span class="Comment">// Mandatory, string - user MSISDN or ACR</span>
+&quot;amount&quot;:<span class="String">&quot;0.70&quot;,</span><span class="Comment">// Mandatory, currency - amount to charge</span>
+&quot;referenceCode&quot;:<span class="String">&quot;myRef&quot;,</span><span class="Comment">// Mandatory, string - your own transaction reference</span>
+&quot;contentName&quot;:<span class="String">&quot;Supergame level 2&quot;,</span><span class="Comment">//optional, string - readable title of content</span>
+&quot;description&quot;:<span class="String">&quot;New level&quot;,</span><span class="Comment">}// optional, string - readable description of content</span></span>
+</pre>
+
+			<div class="description">
+			Now you can charge the item to the user's bill:
+			</div>
+	
+<pre class='sunburst'>var myCharge = <span class="String">new $.fn.oneapi.charge(billableItem);</span>
+</pre>
+
+			<div class="description">
+			...and you will have a handle on the transaction status and ID. That's it - done!
+			</div>
+
+	
+<pre class="sunburst">alert(<span class="String">myCharge.transactionStatus</span> + ' ' + <span class="String">myCharge.transactionID</span>);
+</pre>	
+
+			<div class="description" id="ryocharging">
+				Other libraries need to bind to the following HTTP POST and JSON payload - <button class="inline">Roll your own</button>
+			</div>
+	
+			<div id="rollyourowncharging" style="display: none;">
+        
+<pre class='sunburst'>POST http://netapi.heroku.com/v2/transactions						
+Accept: application/json
+Host: netapi.heroku.com
+Content-Type: application/x-www-form-urlencoded
+
+endUserId= tel%3A%2B16309700001&
+transactionOperationStatus=charged&
+description=Alien%20Invaders%20Game&
+amount=xyz&
+currency=GBP
+referenceCode=REF-12345&
+onBehalfOf=Example%20Games%20Inc&
+</span></pre>
+
+		<div class="description">
+		...and parse the following JSON response detailing the transaction. 
+		</div>
+		
+
+<pre class="sunburst">HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Length: 12345
+Date: Thu, 24 Sep 2011 02:51:59 GMT
+Location: http://netapi.heroku.com/v2_1/acr%3A12345/transactions/abc123
+
+{"amountTransaction": {
+    "endUserId": "acr:12345",
+    "paymentAmount": {
+        "chargingInformation": {
+            "amount": "10",
+            "currency": "USD",
+            "description": "Alien Invaders Game"
+        },
+        "totalAmountCharged": "1.99"
+    },
+    "referenceCode": "REF-12345",
+    "serverReferenceCode": "ABC-123",
+    "resourceURL": " http://example.com/1/payment/
+%3A/transactions/amount/abc123
+    "transactionOperationStatus": "Charged"
+}}&#x000A;</span></pre>
+		</div>
+		<div class="bullet">
+		  <a href="http://oneapi.gsma.com/payment-restful-api/">More: OneAPI payments</a>
+		</div>
+	</div>	
+	
+	<h2 id="getting-started"><a name="location">Get a mobile user's location</a></h2>
+	<div class="contents">
+		<div class="description">
+		  Query a user's location by passing their MSISDN or ACR, plus a name label, to the location function.
+		</div>
+		<pre class='sunburst'>var userLoc = <span class="String">new $.fn.oneapi.location(&quot;12345&quot;, &quot;Me&quot;);</span></pre>
+		<div class="description">
+			Further users can be located the same way, make sure to give each a name:
+		</div>
+ <pre class='sunburst'>var elvis = <span class="String">new $.fn.oneapi.location(&quot;23456&quot;, &quot;Elvis&quot;);</span>
+var jerrylee = <span class="String">new $.fn.oneapi.location(&quot;34567&quot;, &quot;Jerry Lee&quot;);</span>
+var johnny = <span class="String">new $.fn.oneapi.location(&quot;45678&quot;, &quot;Johnny&quot;);</span></pre>	
+
+		<div class="description" id="gmaps-popup">
+			You now have a handle on each located user's name, longitude and latitude
+			via the object properties. For example, you can use these to initialise a Google Map showing the user's location 
+			relative to other friends, and the pubs nearest to them all.The map is a good example of a Network APIs mashup with Web APIs - and if the service was launched from			
+			a smartphone, the primary user's location could be obtained from device GPS.
+			<button class="inline various fancybox.iframe">Run maps example</button>&nbsp;&nbsp;<span id="gmaps"><button class="inline">See Google Maps code</button></span>
+		</div>
+
+
+        	
+  
+
+		<div id="googlemaps" style="display: none;">
+ <pre class='sunburst'>&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;head>
+&lt;title>Location test&lt;/title>
+&lt;!--
+
+Place &lt;a href="img/img.zip">these images</a> for friends and pubs in an img folder relative to the HTML page.
+You will also need a Google Maps API key, see code.google.com for details
+
+-->
+&lt;meta charset="utf-8">
+&lt;style type="text/css">
+  html { height: 100% }
+  body { height: 100%; margin: 0; padding: 0 }
+  #map_canvas { height: 100% }
+&lt;/style>
+&lt;script type="text/javascript" src="jquery-1.6.2.js">&lt;/script>
+&lt;script type="text/javascript" src="jquery.oneapi.js">&lt;/script>
+&lt;script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_KEY&libraries=geometry,places&sensor=false">&lt;/script>
+&lt;script type="text/javascript">
+// This block draws the Google Map
+var map;
+var service;
+var latlng;
+
+function initialize(lat,lng,name) {
+    // Create the initial map based on the initiator's location
+    latlng = new google.maps.LatLng(lat, lng);
+    var myOptions = {
+      zoom: 15,
+      center: latlng,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"),myOptions); 
+    createMarker(latlng,name, "img/me.png");
+    setPubMarkers();
+}
+
+function setPubMarkers(){ // shows all the pubs near our friends
+	var request = {
+	  location: latlng,
+	  radius: '500',
+	  types: ['bar']
+      };
+    service = new google.maps.places.PlacesService(map);
+    service.search(request, callback);
+}
+    
+function callback(results, status) {
+  if (status == google.maps.places.PlacesServiceStatus.OK) {
+	for (var i = 0; i < results.length; i++) {
+	  var pubLoc =  results[i].geometry.location;
+	  var pubName = results[i].name; 
+	  createMarker(pubLoc, pubName, "img/pint.png"); // show a pint glass at each pub
+	}
+  }
+}
+    
+function createMarker(location, name, image) {
+  marker = new google.maps.Marker({
+	position: location,
+	map: map,
+	title: name,
+	icon: image
+  });
+} 
+
+&lt;/script>
+&lt;/head>
+
+
+
+&lt;body> 
+
+&lt;div id="map_canvas">&lt;/canvas>
+&lt;script type="text/javascript">
+// This block locates a user and his friends, then initialises a Google map showing them all
+$(document).ready(function(){
+
+	
+	var primeUser = new $.fn.oneapi.location("12345", "Me");
+	
+	var elvis = new $.fn.oneapi.location("23456", "Elvis");
+	var jerrylee = new $.fn.oneapi.location("34567", "Jerry Lee");
+	var johnny = new $.fn.oneapi.location("45678", "Johnny");
+
+	// create the map with the end user in the centre
+	initialize(primeUser.latitude,primeUser.longitude, primeUser.name);
+	
+	var elvisLatLng = new google.maps.LatLng(elvis.latitude,elvis.longitude);
+	var jerryleeLatLng = new google.maps.LatLng(jerrylee.latitude,jerrylee.longitude);
+	var johnnyLatLng = new google.maps.LatLng(johnny.latitude,johnny.longitude);
+	
+	createMarker(elvisLatLng, elvis.name, "img/friend.png");
+	createMarker(jerryleeLatLng, jerrylee.name, "img/friend.png");
+	createMarker(johnnyLatLng, johnny.name, "img/friend.png");
+
+})
+
+&lt;/script>
+
+&lt;/body>
+&lt;/html>
+ 
+ </pre>
+		 </div>
+ 
+		<div class="description" id="ryolocation">
+		<br />Other libraries need to bind to the following HTTP POST and JSON payload - <button class="inline">Roll your own</button>
+		</div>
+		
+
+		<div id="rollyourownlocation" style="display: none;"> 
+ <pre class='sunburst'><span class="String">GET http://netapi.heroku.com/v2/location/queries/location?address=acr:12345&requestedAccuracy=10</span></pre>
+            <div class="description">
+				...and get the following JSON. You can change the <code>address</code> (the phone number), but the location will always return as London for this sandbox.
+			</div>
+			
+           
+ <pre class='sunburst'>
+{"terminalLocationList": {"terminalLocation": {
+    "address": "acr:12345",
+    "currentLocation": {
+        "accuracy": "100",
+        "altitude": "1001.0",
+        "latitude": "-80.86302",
+        "longitude": "41.277306",
+        "timestamp": "2012-01-03T00:27:23.000Z"
+    },
+    "locationRetrievalStatus": "Retrieved"
+}}}&#x000A;</pre>	 
+		</div>
+		<div class="bullet">
+		  <a href="http://oneapi.gsma.com/reference-location-restful-api/">More: OneAPI location</a>
+		</div>
+	</div>        
+	<h2 id="sendSMS">Send an SMS</h2>
+	<div class="contents">
+		<div class="description">
+		   Send an SMS from your web application to one or more end users.
+		</div>
+		
+<pre class='sunburst'>
+var mySMS = <span class="String">$.fn.oneapi.sms('myphonenumber', 'targetphonenumber', 'Hello world');</span>
+</span>
+</pre>
+
+		<div class="description">
+		The initial response will populate the messageURL value of the pointer. This allows you to query the SMS status: 
+		</div>
+	
+<pre class='sunburst'>var status = <span class="String">$.fn.oneapi.sms.status(mySMS.messageURL);</span>
+<span class="Comment">/*
+Status values returned will be one of:
+DeliveredToTerminal
+DeliveryUncertain
+DeliveryImpossible (try again)
+MessageWaiting (queued for delivery)
+DeliveredToNetwork
+*/</span>
+</pre>
+
+<!-- TODO add message notification callbacks-->
+
+			<div class="description" id="ryosms">
+				Other libraries need to bind to the following HTTP POST and JSON payload - <button class="inline">Roll your own</button>
+				</div>
+		
+			<div id="rollyourownsms" style="display: none;">
+        
+<pre class='sunburst'>POST http://netapi.heroku.com/v2/smsmessaging/outbound/{ACR or MSISDN/requests						
+Accept: application/json
+Host: netapi.heroku.com
+Content-Type: application/x-www-form-urlencoded
+
+address=tel%3A%2B13500000991&
+address=tel%3A %2B13500000992&
+senderAddress=tel:%2B12345678&
+message=Hello%20World&
+notifyURL=http://application.example.com/notifications/
+DeliveryInfoNotification&
+callbackData=some-data-useful-to-the-requester&
+senderName=ACME%20Inc.
+</span></pre>
+
+				<div class="description">
+				...and parse the following JSON response detailing the transaction. 
+				</div>
+	
+
+<pre class="sunburst">HTTP/1.1 201 Created
+Content-Type: application/json
+Content-Length: 12345
+Date: Thu, 24 Sep 2011 02:51:59 GMT
+Location: http://netapi.heroku.com/2/smsmessaging/outbound/tel%3A%2B12345678/requests/abc123
+
+{"resourceReference": 
+	{"resourceURL": "http://netapi.heroku.com/2/smsmessaging/outbound/tel%3A%2B12345678/requests/abc123"}}
+&#x000A;</span></pre>
+			</div><!-- end rollyourown div-->
+		    <div class="bullet">
+		      <a href="http://oneapi.gsma.com/sms-restful-api//">More: OneAPI SMS</a>
+		    </div>
+		</div><!-- end SMS contents div-->
+	  </div><!-- end id = contents div-->
+	</div><!-- end id = body div-->
+	 <div id="footer">
+      <div class="spacer"></div>
+      <div class="spacer"></div>
+      <img alt="spacer" src="img/spacer.png"/>
+    </div>
+    <div id="credits">
+      <p>Design inspired by <a href="http://gembundler.com">Bundler</a></p>
+    </div>
+    <a href="https://github.com/OneAPI/GSMA-OneAPI/tree/master/Ruby Sandbox" id="github">
+      <img alt="Fork me on GitHub" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" />
+    </a>
+  </body>
+</html>
