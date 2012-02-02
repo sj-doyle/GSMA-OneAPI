@@ -1,0 +1,32 @@
+{
+ "name":"terminalLocationList",
+ "properties":{
+	 "terminalLocationList":{
+		 "type":"object",
+		 "description":"collection of terminal locations",
+		 "required":true,
+		 "properties":{
+			"terminalLocation":{
+				"type":"object",
+				"description":"the location of one terminal",
+				"required":"true",
+				"properties":{
+					"currentLocation":{ 
+						  "type":"object",
+						  "description":"the current location of one terminal",
+						  "required":"true",
+						  "properties":{
+							"latitude":{"type":"string","required":"true"},
+							"altitude":{"type":"string","required":"true"},
+							"longitude":{"type":"string","required":"true"},
+							"accuracy":{"type":"string","required":"true"}			   	    
+							}
+					},
+					"address":{"type":"string","required":"true"},
+					"locationRetrievalStatus":{"type":"string","pattern":"^Retrieved$|^NotRetrieved$|^Error$", "required":"true"}
+			}
+		}
+	 }
+   }
+ }
+}

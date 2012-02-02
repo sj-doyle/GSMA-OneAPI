@@ -1,0 +1,10 @@
+oneapitest.rb
+
+Basic conformance test for OneAPI endpoints
+Note: only location supported currently, others to be added
+
+
+Usage: ruby -rubygems oneapitest.rb "URL of location endpoint"
+Tests the validity of the JSON response and HTTP repsonse code.
+Ensure that locationSchema.json is in the same directory as oneapitest.rb
+
