@@ -15,14 +15,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.gsm.oneapi.responsebean.RequestError;
 
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 /**
  * Provides constants and utilities to the individual OneAPI servlets
@@ -367,13 +366,13 @@ public class OneAPIServlet extends HttpServlet{
 			} else if (parts[0].equalsIgnoreCase("Basic")) {
 				logger.debug("Using basic authorization. Coded="+parts[1]);
 				try {
-					byte[] decoded=Base64.decode(parts[1]);
+					byte[] decoded=Base64.decodeBase64(parts[1]);
 					String usernamePassword=new String(decoded);
 					logger.debug("Username/Password = "+usernamePassword);
 					/*
 					 * At this point the username and password string is known and could be checked against some form of service access database
 					 */
-				} catch (Base64DecodingException e) {
+				} catch (Exception e) {
 					failedAuthentication=true;
 					sendError(response, RequestError.SERVICEEXCEPTION, AUTHENTICATION_FAILURE, "SVC0003", "Base64 Decoding Failure ", null);											
 				}
